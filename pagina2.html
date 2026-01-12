@@ -4,271 +4,66 @@
 <meta charset="UTF-8">
 <title>Ranking Pirata</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
-
 <style>
-/* ---------- FONDO ---------- */
 body{
-  margin:0;
-  padding:50px;
-  background:
-    linear-gradient(rgba(0,0,0,.88), rgba(0,0,0,.88)),
-    url("fondo.jpg") center/cover fixed;
+  background:#000;
   color:#f3e7cf;
-  font-family:"Playfair Display", serif;
+  font-family:Arial;
+  padding:40px;
 }
-
-/* ---------- BOTÓN VOLVER ---------- */
-.volver{
-  position:fixed;
-  top:20px;
-  right:20px;
-  z-index:1000;
-}
-
-.volver button{
-  padding:14px 26px;
-  font-size:18px;
-  font-family:"Cinzel", serif;
-  letter-spacing:2px;
-  cursor:pointer;
-  background:linear-gradient(135deg,#c9a44c,#f6d48a);
-  color:#111;
-  border:none;
-  border-radius:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,.6);
-  transition:.3s;
-}
-
-.volver button:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 30px gold;
-}
-
-/* ---------- TÍTULO ---------- */
-h2{
-  text-align:center;
-  margin-bottom:40px;
-  font-size:46px;
-  letter-spacing:5px;
-  font-family:"Cinzel", serif;
-}
-
-/* ---------- BOTÓN ACTUALIZAR ---------- */
-.boton-wrap{
-  text-align:center;
-  margin-bottom:80px;
-}
-
-#btnActualizar{
-  padding:18px 38px;
-  font-size:22px;
-  font-family:"Cinzel", serif;
-  letter-spacing:3px;
-  cursor:pointer;
-  background:linear-gradient(135deg,#c9a44c,#f6d48a);
-  color:#111;
-  border:none;
-  border-radius:16px;
-  box-shadow:0 12px 30px rgba(0,0,0,.6);
-  transition:.3s;
-}
-
-#btnActualizar:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 35px gold;
-}
-
-/* ---------- PODIO ---------- */
-.podio{
-  display:flex;
-  justify-content:center;
-  gap:25px;
-  margin-bottom:120px;
-}
-
-/* ---------- LISTA ---------- */
-.lista{
-  display:flex;
-  flex-direction:column;
-  gap:70px;
-  max-width:1100px;
-  margin:0 auto;
-}
-
-/* ---------- CARD ---------- */
 .card{
   display:flex;
-  align-items:center;
-  gap:45px;
-  opacity:0;
-  transform:translateY(40px);
-  animation:entrada .7s ease forwards;
+  gap:20px;
+  margin-bottom:40px;
 }
-
-/* ---------- POSTER ---------- */
 .poster{
-  width:320px;
-  height:440px;
+  width:220px;
+  height:300px;
+  border-radius:20px;
   background-size:cover;
-  background-position:center;
-  border-radius:26px;
-  box-shadow:0 24px 42px rgba(0,0,0,.85);
 }
-
-/* ---------- CAPITÁN ---------- */
-.capitan .poster{
-  border:6px solid gold;
-  animation:brillo 2s infinite alternate;
-}
-
-@keyframes brillo{
-  from{box-shadow:0 0 20px gold;}
-  to{box-shadow:0 0 50px #ffd700;}
-}
-
-/* ---------- TEXTO ---------- */
-.info{flex:1;}
-
-.posicion{
-  font-family:"Cinzel", serif;
-  font-size:38px;
-  letter-spacing:4px;
-  color:#ffd700;
-  text-shadow:2px 2px 0 #000;
-  margin-bottom:10px;
-}
-
-.rol{
-  font-family:"Cinzel", serif;
-  font-size:32px;
-  letter-spacing:4px;
-  margin-bottom:14px;
-  color:#f6d48a;
-  text-shadow:2px 2px 0 #000;
-}
-
-.nombre{
-  font-size:42px;
-  font-weight:800;
-  text-transform:uppercase;
-  text-shadow:2px 2px 0 #000;
-}
-
-.recompensa{
-  margin-top:20px;
-  font-size:34px;
-  color:#f1c76a;
-  text-shadow:2px 2px 0 #000;
-}
-
-/* ---------- ENTRADA ---------- */
-@keyframes entrada{
-  to{
-    opacity:1;
-    transform:none;
-  }
-}
-
-/* ---------- WATE ---------- */
-#wate{
-  position:fixed;
-  inset:0;
-  background:black;
-  display:none;
-  z-index:9999;
-}
-
-#wate img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.info{
+  font-size:28px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="volver">
-  <button onclick="window.location.href='index.html'">⬅ VOLVER</button>
-</div>
+<h2>🏴‍☠️ Ranking Oficial</h2>
+<div id="ranking"></div>
 
-<h2>🏴‍☠️ TRIPULACIÓN YONKO 🏴‍☠️</h2>
-
-<div class="boton-wrap">
-  <button id="btnActualizar">🔄 ACTUALIZAR RANKING</button>
-</div>
-
-<div id="podio" class="podio"></div>
-<div id="lista" class="lista"></div>
-
-<div id="wate">
-  <img src="wate.gif">
-  <audio id="wateSound" src="wate.mp3"></audio>
-</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-let ultimoCapitan = null;
+const firebaseConfig = {
+  apiKey: "PEGA_AQUI_TU_API_KEY",
+  authDomain: "ranking-pirata.firebaseapp.com",
+  databaseURL: "https://ranking-pirata-default-rtdb.firebaseio.com",
+  projectId: "ranking-pirata"
+};
 
-function crearCard(item, index, rol="", clase="", delay=0){
-  const recompensa = (item.puntaje + 1000000).toLocaleString();
-  const card = document.createElement("div");
-  card.className = `card ${clase}`;
-  card.style.animationDelay = `${delay}s`;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  card.innerHTML = `
-    <div class="poster" style="background-image:url('${item.foto}')"></div>
-    <div class="info">
-      <div class="posicion">#${index + 1}</div>
-      ${rol ? `<div class="rol">${rol}</div>` : ""}
-      <div class="nombre">${item.nombre}</div>
-      <div class="recompensa">${recompensa} 💰</div>
-    </div>
-  `;
-  return card;
-}
+db.ref("jugadores").on("value", snap=>{
+  if(!snap.exists()) return;
+  const jugadores = Object.values(snap.val())
+    .sort((a,b)=>b.puntaje-a.puntaje);
 
-function mostrarWate(){
-  const w = document.getElementById("wate");
-  const s = document.getElementById("wateSound");
-  w.style.display="block";
-  s.currentTime = 0;
-  s.play();
-  setTimeout(()=>{
-    w.style.display="none";
-    s.pause();
-  },3000);
-}
-
-function cargar(){
-  const data = localStorage.getItem("jugadores");
-  if(!data) return;
-
-  const jugadores = JSON.parse(data).sort((a,b)=>b.puntaje-a.puntaje);
-
-  const capitanActual = jugadores[0]?.nombre;
-  if(ultimoCapitan && capitanActual !== ultimoCapitan){
-    mostrarWate();
-  }
-  ultimoCapitan = capitanActual;
-
-  const podio = document.getElementById("podio");
-  const lista = document.getElementById("lista");
-
-  podio.innerHTML="";
-  lista.innerHTML="";
-
-  if(jugadores[1]) podio.appendChild(crearCard(jugadores[1],1,"VICE-CAPITÁN"));
-  if(jugadores[0]) podio.appendChild(crearCard(jugadores[0],0,"CAPITÁN","capitan"));
-  if(jugadores[2]) podio.appendChild(crearCard(jugadores[2],2,"VICE-CAPITÁN JR"));
-
-  jugadores.slice(3).forEach((j,i)=>{
-    lista.appendChild(crearCard(j,i+3,"","", i*0.15));
+  ranking.innerHTML="";
+  jugadores.forEach((j,i)=>{
+    ranking.innerHTML += `
+      <div class="card">
+        <div class="poster" style="background-image:url('${j.foto}')"></div>
+        <div class="info">
+          #${i+1}<br>
+          <b>${j.nombre}</b><br>
+          ${(j.puntaje+1000000).toLocaleString()} 💰
+        </div>
+      </div>`;
   });
-}
-
-document.getElementById("btnActualizar").addEventListener("click", cargar);
-cargar();
+});
 </script>
 
 </body>
