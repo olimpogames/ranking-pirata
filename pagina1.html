@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Página 1</title>
+
+<style>
+body{
+  background:#111;
+  color:#eee;
+  font-family:Arial;
+  padding:20px;
+}
+
+input,button{
+  padding:8px;
+  margin:5px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th,td{
+  border:1px solid #444;
+  padding:8px;
+  text-align:center;
+}
+
+img{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Página 1 – Control</h2>
+
+<input id="nombre" placeholder="Nombre">
+<input id="puntaje" type="number" placeholder="Puntaje inicial">
+<input type="file" id="foto" accept="image/*">
+
+<br>
+
+<button onclick="agregar()">Agregar</button>
+<button onclick="abrirRanking()">Ir a Ranking</button>
+
+<table>
+<thead>
+<tr>
+  <th>Foto</th>
+  <th>Nombre</th>
+  <th>Puntaje</th>
+  <th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+
+<script>
+let jugadores = JSON.parse(localStorage.getItem("jugadores")) || [];
+
+/* ================= GUARDAR ================= */
+function guardar(){
+  localStorage.setItem("jugadores", JSON.stringify(jugadores));
+  localStorage.setItem("ranking_update", Date.now());
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const t = document.getElementById("tabla");
+  t.innerHTML = "";
+
+  [...jugadores]
+    .sort((a,b)=>b.puntaje-a.puntaje)
+    .forEach(j=>{
+      t.innerHTML += `
+        <tr>
+          <td><img src="${j.foto}"></td>
+          <td>${j.nombre}</td>
+          <td>${j.puntaje}</td>
+          <td>
+            <button onclick="sumar('${j.id}')">+</button>
+            <button onclick="restar('${j.id}')">−</button>
+            <button onclick="eliminar('${j.id}')">X</button>
+          </td>
+        </tr>
+      `;
+    });
+}
+
+/* ================= AGREGAR ================= */
+function agregar(){
+  const nombre = document.getElementById("nombre").value.trim();
+  const puntajeInicial = parseInt(document.getElementById("puntaje").value);
+  const fileInput = document.getElementById("foto");
+  const file = fileInput.files[0];
+
+  if(!nombre || isNaN(puntajeInicial) || !file){
+    alert("Nombre, puntaje inicial y foto son obligatorios");
+    return;
+  }
+
+  const img = new Image();
+  const reader = new FileReader();
+
+  reader.onload = e => img.src = e.target.result;
+
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    const size = 256;
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, size, size);
+
+    const base64 = canvas.toDataURL("image/jpeg", 0.7);
+
+    jugadores.push({
+      id: Date.now().toString(),
+      nombre,
+      puntaje: puntajeInicial,
+      foto: base64
+    });
+
+    guardar();
+    render();
+
+    document.getElementById("nombre").value = "";
+    document.getElementById("puntaje").value = "";
+    fileInput.value = "";
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* ================= ACCIONES ================= */
+function sumar(id){
+  const j = jugadores.find(x=>x.id===id);
+  if(!j) return;
+  j.puntaje++;
+  guardar();
+  render();
+}
+
+function restar(id){
+  const j = jugadores.find(x=>x.id===id);
+  if(!j) return;
+  j.puntaje--;
+  guardar();
+  render();
+}
+
+function eliminar(id){
+  jugadores = jugadores.filter(j=>j.id!==id);
+  guardar();
+  render();
+}
+
+function abrirRanking(){
+  window.open("pagina2.html","_blank");
+}
+
+/* ================= INIT ================= */
+render();
+</script>
+
+</body>
+</html>
