@@ -3,8 +3,8 @@ function login() {
   const pass = document.getElementById("pass").value;
   const msg = document.getElementById("msg");
 
-  const USER_OK = "seba";
-  const PASS_OK = "chupalo";
+  const USER_OK = "admin";
+  const PASS_OK = "1234";
 
   if (user === USER_OK && pass === PASS_OK) {
     msg.style.color = "green";
@@ -19,3 +19,4 @@ function login() {
     msg.innerText = "Usuario o contraseña incorrectos";
   }
 }
+
