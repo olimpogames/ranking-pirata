@@ -1,71 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Ranking Pirata</title>
-
-<style>
-body{
-  background:#000;
-  color:#f3e7cf;
-  font-family:Arial;
-  padding:40px;
-}
-.card{
-  display:flex;
-  gap:20px;
-  margin-bottom:40px;
-}
-.poster{
-  width:220px;
-  height:300px;
-  border-radius:20px;
-  background-size:cover;
-}
-.info{
-  font-size:28px;
-}
-</style>
-</head>
-<body>
-
-<h2>🏴‍☠️ Ranking Oficial</h2>
-<div id="ranking"></div>
-
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyAZRfFXAdgEMmp7JKjmwyTiQiZLFk3MmTA",
+  apiKey: "PEGA_AQUI_TU_API_KEY",
   authDomain: "ranking-pirata.firebaseapp.com",
   databaseURL: "https://ranking-pirata-default-rtdb.firebaseio.com",
-  projectId: "ranking-pirata"
+  projectId: "ranking-pirata",
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db = firebase.database().ref("jugadores");
 
-db.ref("jugadores").on("value", snap=>{
-  if(!snap.exists()) return;
-  const jugadores = Object.values(snap.val())
+let ultimoCapitan=null;
+
+db.on("value", snap=>{
+  const jugadores = Object.values(snap.val()||{})
     .sort((a,b)=>b.puntaje-a.puntaje);
-
-  ranking.innerHTML="";
-  jugadores.forEach((j,i)=>{
-    ranking.innerHTML += `
-      <div class="card">
-        <div class="poster" style="background-image:url('${j.foto}')"></div>
-        <div class="info">
-          #${i+1}<br>
-          <b>${j.nombre}</b><br>
-          ${(j.puntaje+1000000).toLocaleString()} 💰
-        </div>
-      </div>`;
-  });
+  cargarRanking(jugadores);
 });
 </script>
-
-</body>
-</html>
-
