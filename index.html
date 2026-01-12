@@ -1,20 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Inicio de sesión</title>
+<meta charset="UTF-8">
+<title>Login Admin</title>
+<style>
+body{
+  background:#0b0b0b;
+  color:#f3e7cf;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+}
+.box{
+  background:#111;
+  padding:30px;
+  border-radius:12px;
+  text-align:center;
+}
+input,button{
+  padding:10px;
+  margin:8px;
+  width:200px;
+}
+button{
+  background:#cfa93f;
+  border:none;
+  cursor:pointer;
+}
+</style>
 </head>
 <body>
 
-  <h2>Iniciar sesión</h2>
-
-  <input id="user" type="text" placeholder="Usuario"><br><br>
-  <input id="pass" type="password" placeholder="Contraseña"><br><br>
-
+<div class="box">
+  <h2>Ingreso Capitán</h2>
+  <input id="user" placeholder="Usuario">
+  <input id="pass" type="password" placeholder="Contraseña">
   <button onclick="login()">Entrar</button>
-
   <p id="msg"></p>
+</div>
 
-  <script src="login.js"></script>
+<script>
+function login(){
+  if(user.value==="admin" && pass.value==="1234"){
+    localStorage.setItem("admin","ok");
+    location.href="pagina1.html";
+  }else{
+    msg.textContent="Acceso denegado";
+  }
+}
+</script>
+
 </body>
 </html>
