@@ -147,11 +147,6 @@ h2{
 <div id="podio" class="podio"></div>
 <div id="lista" class="lista"></div>
 
-<div id="wate">
-  <img src="wate.gif">
-  <audio id="wateSound" src="wate.mp3"></audio>
-</div>
-
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAZRfFXAdgEMmp7JKjmwyTiQiZLFk3MmTA",
@@ -162,8 +157,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database().ref("jugadores");
-
-let ultimoCapitan=null;
 
 function crearCard(j, rol="", clase="", pos=0, delay=0){
   const card=document.createElement("div");
@@ -180,27 +173,12 @@ function crearCard(j, rol="", clase="", pos=0, delay=0){
   return card;
 }
 
-function mostrarWate(){
-  const w=document.getElementById("wate");
-  const s=document.getElementById("wateSound");
-  w.style.display="block";
-  s.currentTime=0;
-  s.play();
-  setTimeout(()=>{
-    w.style.display="none";
-    s.pause();
-  },3000);
-}
-
 db.on("value",snap=>{
-  const jugadores=Object.values(snap.val()||{})
+  const jugadores = Object.values(snap.val()||{})
     .sort((a,b)=>b.puntaje-a.puntaje);
 
-  const capitan=jugadores[0]?.nombre;
-  if(ultimoCapitan && capitan!==ultimoCapitan){
-    mostrarWate();
-  }
-  ultimoCapitan=capitan;
+  const podio = document.getElementById("podio");
+  const lista = document.getElementById("lista");
 
   podio.innerHTML="";
   lista.innerHTML="";
@@ -216,5 +194,7 @@ db.on("value",snap=>{
 </script>
 
 </body>
+
 </html>
+
 
