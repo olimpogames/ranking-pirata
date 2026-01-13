@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ranking Pirata</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
@@ -9,7 +10,7 @@
 <style>
 body{
   margin:0;
-  padding:60px;
+  padding:40px 20px;
   background:
     linear-gradient(rgba(0,0,0,.88), rgba(0,0,0,.88)),
     url("fondo.jpg") center/cover fixed;
@@ -19,56 +20,59 @@ body{
 
 h2{
   text-align:center;
-  margin-bottom:70px;
-  font-size:46px;
-  letter-spacing:5px;
+  margin-bottom:60px;
+  font-size:42px;
+  letter-spacing:4px;
   font-family:"Cinzel", serif;
 }
 
 .volver{
   position:fixed;
-  top:20px;
-  right:20px;
-  padding:14px 28px;
+  top:15px;
+  right:15px;
+  padding:12px 22px;
   font-family:"Cinzel", serif;
   background:linear-gradient(135deg,#c9a44c,#f6d48a);
   border:none;
   border-radius:14px;
   cursor:pointer;
-  font-size:18px;
+  font-size:16px;
+  z-index:10;
 }
 
 .podio{
   display:flex;
   justify-content:center;
   gap:25px;
-  margin-bottom:120px;
+  margin-bottom:100px;
+  flex-wrap:wrap;
 }
 
 .lista{
   display:flex;
   flex-direction:column;
-  gap:70px;
-  max-width:1200px;
+  gap:60px;
+  max-width:1100px;
   margin:auto;
 }
 
 .card{
   display:flex;
   align-items:center;
-  gap:50px;
+  gap:40px;
   opacity:0;
   transform:translateY(40px);
   animation:entrada .7s ease forwards;
 }
 
 .poster{
-  width:340px;
-  height:460px;
+  width:300px;
+  height:420px;
   background-size:cover;
   background-position:center;
   border-radius:26px;
   box-shadow:0 24px 42px rgba(0,0,0,.85);
+  flex-shrink:0;
 }
 
 .capitan .poster{
@@ -78,7 +82,7 @@ h2{
 
 @keyframes brillo{
   from{box-shadow:0 0 20px gold;}
-  to{box-shadow:0 0 50px #ffd700;}
+  to{box-shadow:0 0 55px #ffd700;}
 }
 
 .info{
@@ -87,28 +91,29 @@ h2{
 
 .rol{
   font-family:"Cinzel", serif;
-  font-size:34px;
+  font-size:30px;
   letter-spacing:4px;
-  margin-bottom:18px;
+  margin-bottom:14px;
   color:#f6d48a;
 }
 
 .nombre{
-  font-size:44px;
+  font-size:40px;
   font-weight:800;
   text-transform:uppercase;
 }
 
 .recompensa{
-  margin-top:18px;
-  font-size:34px;
+  margin-top:16px;
+  font-size:30px;
   color:#f1c76a;
 }
 
 .posicion{
-  font-size:90px;
+  font-size:80px;
   font-family:"Cinzel", serif;
   color:#d4af37;
+  min-width:90px;
 }
 
 @keyframes entrada{
@@ -118,18 +123,34 @@ h2{
   }
 }
 
-/* WATE */
-#wate{
-  position:fixed;
-  inset:0;
-  background:black;
-  display:none;
-  z-index:9999;
-}
-#wate img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+/* 📱 RESPONSIVE */
+@media (max-width: 768px){
+  .card{
+    flex-direction:column;
+    text-align:center;
+    gap:25px;
+  }
+
+  .poster{
+    width:240px;
+    height:340px;
+  }
+
+  .posicion{
+    font-size:60px;
+  }
+
+  .nombre{
+    font-size:32px;
+  }
+
+  .recompensa{
+    font-size:26px;
+  }
+
+  h2{
+    font-size:32px;
+  }
 }
 </style>
 
@@ -174,11 +195,8 @@ function crearCard(j, rol="", clase="", pos=0, delay=0){
 }
 
 db.on("value",snap=>{
-  const jugadores = Object.values(snap.val()||{})
+  const jugadores=Object.values(snap.val()||{})
     .sort((a,b)=>b.puntaje-a.puntaje);
-
-  const podio = document.getElementById("podio");
-  const lista = document.getElementById("lista");
 
   podio.innerHTML="";
   lista.innerHTML="";
@@ -194,7 +212,4 @@ db.on("value",snap=>{
 </script>
 
 </body>
-
 </html>
-
-
