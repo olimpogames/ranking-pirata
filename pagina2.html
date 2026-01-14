@@ -228,8 +228,8 @@ body.gigante .poster{
 
 <body>
 
-<button class="volver" onclick="location.href='index.html'">⬅ Inicio</button>
-<button class="fullscreen" onclick="pantallaGigante()">🖥️ MODO PANTALLA</button>
+<button class="volver" onclick="location.href='index.html'">⬅ ADMIN</button>
+<button class="fullscreen" onclick="pantallaGigante()">PANTALLA COMPLETA</button>
 
 <h2>🏴‍☠️ TRIPULACIÓN YONKO 🏴‍☠️</h2>
 
@@ -270,7 +270,7 @@ function crearCard(j,rol,pos,cap=false){
       <div class="posicion">#${pos}</div>
       ${rol?`<div class="rol">${rol}</div>`:""}
       <div class="nombre">${j.nombre}</div>
-      <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 💰</div>
+      <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} </div>
     </div>`;
   return c;
 }
@@ -294,3 +294,4 @@ db.on("value",snap=>{
 
 </body>
 </html>
+
