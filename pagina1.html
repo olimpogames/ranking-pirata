@@ -43,6 +43,10 @@ button{
   border:none;
   cursor:pointer;
 }
+input[type="number"]{
+  width:100px;
+  text-align:center;
+}
 </style>
 </head>
 
@@ -51,7 +55,7 @@ button{
 <h2>🏴‍☠️ Comandante Marina 🏴‍☠️</h2>
 
 <input id="nombre" placeholder="Nombre">
-<input id="puntaje" type="number" placeholder="Puntaje">
+<input id="puntaje" type="number" placeholder="Recompensa">
 <input id="foto" type="file" accept="image/*">
 <button onclick="agregar()">Agregar</button>
 <button onclick="window.open('pagina2.html')">Ver Ranking</button>
@@ -105,7 +109,10 @@ function render(){
         <tr>
           <td><img src="${j.foto}"></td>
           <td>${j.nombre}</td>
-          <td>${j.puntaje}</td>
+          <td>
+            <input type="number" value="${j.puntaje}"
+              onchange="setPuntaje('${j.id}', this.value)">
+          </td>
           <td>
             <button onclick="mod('${j.id}',1)">+</button>
             <button onclick="mod('${j.id}',-1)">-</button>
@@ -136,6 +143,11 @@ function mod(id,v){
   guardar();
 }
 
+function setPuntaje(id,val){
+  jugadores[id].puntaje = parseInt(val) || 0;
+  guardar();
+}
+
 function del(id){
   delete jugadores[id];
   guardar();
@@ -144,4 +156,3 @@ function del(id){
 
 </body>
 </html>
-
