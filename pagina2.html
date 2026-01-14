@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 📲 MODO APP -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+
 <title>Ranking Pirata</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
@@ -75,11 +81,27 @@ h2{
   background-position:center;
   border-radius:26px;
   box-shadow:0 24px 42px rgba(0,0,0,.85);
+  position:relative;
 }
 
 .capitan .poster{
   border:6px solid gold;
-  animation:brillo 2s infinite alternate;
+}
+
+/* 👑 CORONA */
+.corona{
+  position:absolute;
+  top:-50px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:56px;
+  animation:flotar 2.2s ease-in-out infinite;
+}
+
+@keyframes flotar{
+  0%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-14px);}
+  100%{transform:translate(-50%,0);}
 }
 
 .info{flex:1;}
@@ -114,31 +136,23 @@ h2{
   to{opacity:1;transform:none;}
 }
 
-@keyframes brillo{
-  from{box-shadow:0 0 20px gold;}
-  to{box-shadow:0 0 60px #ffd700;}
-}
-
 /* ================= 📱 MOBILE – INSTAGRAM MODE ================= */
 @media (max-width:768px){
 
-  body{
-    padding:0;
-  }
+  body{padding:0;}
 
-  h2,.volver{
-    display:none;
-  }
+  h2,.volver{display:none;}
 
-  .podio,.lista{
-    display:block;
-  }
+  .podio{display:none;}
 
-  /* contenedor swipe */
   .swipe{
     height:100vh;
     overflow-y:auto;
     scroll-snap-type:y mandatory;
+  }
+
+  .lista{
+    gap:0;
   }
 
   .card{
@@ -155,31 +169,19 @@ h2{
     height:360px;
   }
 
-  .posicion{
-    font-size:60px;
+  .posicion{font-size:60px;}
+  .rol{font-size:22px;}
+  .nombre{font-size:30px;}
+  .recompensa{font-size:22px;}
+
+  /* 🔥 TRANSICIÓN CAPITÁN MOBILE */
+  .nuevo-capitan{
+    animation:cambioCapitan 1.2s ease;
   }
 
-  .rol{
-    font-size:22px;
-  }
-
-  .nombre{
-    font-size:30px;
-  }
-
-  .recompensa{
-    font-size:22px;
-  }
-
-  /* 🔥 ANIMACIÓN CAPITÁN MOBILE */
-  .capitan{
-    animation:capitanPulse 2.2s infinite;
-  }
-
-  @keyframes capitanPulse{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.05);}
-    100%{transform:scale(1);}
+  @keyframes cambioCapitan{
+    0%{opacity:0;transform:scale(.7);}
+    100%{opacity:1;transform:scale(1);}
   }
 }
 </style>
@@ -210,15 +212,23 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database().ref("jugadores");
 
-function crearCard(j,rol="",clase="",pos=0){
+let capitanActual=null;
+
+function crearCard(j,rol="",clase="",pos=0,esCapitan=false){
   const c=document.createElement("div");
   c.className=`card ${clase}`;
+
   c.innerHTML=`
     <div class="posicion">#${pos}</div>
-    <div class="poster" style="background-image:url('${j.foto}')"></div>
+    <div class="poster">
+      ${esCapitan ? `<div class="corona">👑</div>` : ``}
+    </div>
     <div class="rol">${rol}</div>
     <div class="nombre">${j.nombre}</div>
-    <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 💰</div>`;
+    <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 💰</div>
+  `;
+
+  c.querySelector(".poster").style.backgroundImage=`url('${j.foto}')`;
   return c;
 }
 
@@ -229,16 +239,28 @@ db.on("value",snap=>{
   podio.innerHTML="";
   lista.innerHTML="";
 
-  if(jugadores[0]) lista.appendChild(crearCard(jugadores[0],"REY PIRATA","capitan",1));
-  if(jugadores[1]) lista.appendChild(crearCard(jugadores[1],"YONKO","",2));
-  if(jugadores[2]) lista.appendChild(crearCard(jugadores[2],"SUPER-NOVA","",3));
+  const nuevoCapitan=jugadores[0]?.nombre;
 
-  jugadores.slice(3).forEach((j,i)=>{
-    lista.appendChild(crearCard(j,"","",i+4));
+  /* 🖥️ PODIO DESKTOP */
+  if(jugadores[0]) podio.appendChild(crearCard(jugadores[0],"REY PIRATA","capitan",1,true));
+  if(jugadores[1]) podio.appendChild(crearCard(jugadores[1],"YONKO","",2));
+  if(jugadores[2]) podio.appendChild(crearCard(jugadores[2],"SUPER-NOVA","",3));
+
+  /* 📱 LISTA */
+  jugadores.forEach((j,i)=>{
+    const esCapitan=i===0;
+    const card=crearCard(j,i===0?"REY PIRATA":"",i===0?"capitan":"",i+1,esCapitan);
+
+    if(esCapitan && capitanActual && capitanActual!==nuevoCapitan){
+      card.classList.add("nuevo-capitan");
+    }
+
+    lista.appendChild(card);
   });
+
+  capitanActual=nuevoCapitan;
 });
 </script>
 
 </body>
 </html>
-
