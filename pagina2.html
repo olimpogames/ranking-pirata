@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* ================= BASE ================= */
+/* ===== BASE ===== */
 body{
   margin:0;
   padding:60px;
@@ -17,50 +17,63 @@ body{
     url("fondo.jpg") center/cover fixed;
   color:#f3e7cf;
   font-family:"Playfair Display", serif;
+  transition:.3s;
 }
+
+body.gigante{ font-size:1.15em; }
 
 h2{
   text-align:center;
-  margin-bottom:20px;
+  margin-bottom:30px;
   font-size:46px;
   letter-spacing:5px;
   font-family:"Cinzel", serif;
 }
 
+/* ===== BOTONES ===== */
 .volver{
   position:fixed;
-  top:20px;
-  right:20px;
-  padding:14px 28px;
+  top:16px;
+  right:16px;
+  padding:8px 14px;
+  font-size:13px;
   font-family:"Cinzel", serif;
   background:linear-gradient(135deg,#c9a44c,#f6d48a);
   border:none;
-  border-radius:14px;
+  border-radius:10px;
   cursor:pointer;
   z-index:100;
 }
 
-/* ================= BUSCADOR ================= */
-.buscador{
-  display:flex;
-  justify-content:center;
-  margin-bottom:40px;
+.fullscreen{
+  position:fixed;
+  top:16px;
+  left:16px;
+  padding:8px 14px;
+  font-size:13px;
+  font-family:"Cinzel", serif;
+  background:#111;
+  color:#f6d48a;
+  border:1px solid #c9a44c;
+  border-radius:10px;
+  cursor:pointer;
+  z-index:100;
 }
 
-.buscador input{
-  width:100%;
-  max-width:420px;
-  padding:14px 18px;
-  font-size:18px;
+/* ===== BUSCADOR ===== */
+.busqueda{
+  display:block;
+  margin:0 auto 50px;
+  padding:12px 18px;
+  width:320px;
+  max-width:90%;
   border-radius:14px;
   border:none;
+  font-size:16px;
   outline:none;
-  background:#111;
-  color:#f3e7cf;
-  box-shadow:0 0 0 2px #c9a44c inset;
 }
 
-/* ================= PODIO ================= */
+/* ===== PODIO ===== */
 .podio{
   display:flex;
   justify-content:center;
@@ -73,103 +86,115 @@ h2{
   text-align:center;
 }
 
-/* ================= LISTA ================= */
+/* ===== LISTA ===== */
 .lista{
   display:flex;
   flex-direction:column;
-  gap:40px;
+  gap:50px;
   max-width:1100px;
   margin:auto;
 }
 
-/* ================= CARD ================= */
+/* ===== CARD ===== */
 .card{
   display:flex;
   align-items:center;
-  gap:20px;
-  padding-bottom:25px;
-  border-bottom:2px solid rgba(201,164,76,.4);
+  gap:22px;
+  opacity:0;
+  transform:translateY(30px);
+  animation:entrada .6s ease forwards;
 }
 
-/* ================= POSTER ================= */
+/* ===== POSTER ===== */
 .poster{
-  width:140px;
-  height:140px;
+  width:320px;
+  height:440px;
   background-size:cover;
   background-position:center;
-  border-radius:18px;
-  box-shadow:0 14px 26px rgba(0,0,0,.8);
+  border-radius:26px;
+  box-shadow:0 24px 42px rgba(0,0,0,.85);
   position:relative;
 }
 
-/* ================= CAPITÁN ================= */
+/* ===== CAPITÁN ===== */
 .capitan .poster{
-  border:4px solid gold;
+  border:6px solid gold;
+  animation:brillo 2s infinite alternate;
 }
 
 .corona{
   position:absolute;
-  top:-22px;
+  top:-36px;
   left:50%;
   transform:translateX(-50%);
-  font-size:30px;
+  font-size:46px;
+  animation:flotar 2s infinite;
 }
 
-/* ================= TEXTO ================= */
-.info{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
+/* ===== TEXTO ===== */
+.info{ max-width:420px; }
+
+.podio .info{ text-align:center; }
 
 .posicion{
-  font-size:34px;
+  font-size:78px;
   font-family:"Cinzel", serif;
   color:#d4af37;
 }
 
+.rol{
+  font-family:"Cinzel", serif;
+  font-size:28px;
+  letter-spacing:4px;
+  color:#f6d48a;
+}
+
 .nombre{
-  font-size:26px;
+  font-size:36px;
   font-weight:800;
   text-transform:uppercase;
 }
 
 .recompensa{
-  font-size:20px;
+  margin-top:12px;
+  font-size:28px;
   color:#f1c76a;
 }
 
-/* ================= MOBILE ================= */
+/* ===== ANIMACIONES ===== */
+@keyframes entrada{
+  to{opacity:1;transform:none;}
+}
+@keyframes brillo{
+  from{box-shadow:0 0 20px gold;}
+  to{box-shadow:0 0 60px #ffd700;}
+}
+@keyframes flotar{
+  0%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-10px);}
+  100%{transform:translate(-50%,0);}
+}
+
+/* ===== 📱 MOBILE ===== */
 @media(max-width:768px){
+  body{padding:0;}
+  h2,.volver,.fullscreen{display:none;}
 
-  body{
-    padding:20px;
-  }
+  .podio{display:none;}
 
-  h2{
-    font-size:30px;
-  }
-
-  .podio{
-    display:none;
+  .lista .card{
+    height:100vh;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
   }
 
   .poster{
-    width:90px;
-    height:90px;
+    width:260px;
+    height:360px;
   }
 
-  .posicion{
-    font-size:22px;
-  }
-
-  .nombre{
-    font-size:18px;
-  }
-
-  .recompensa{
-    font-size:16px;
-  }
+  .info{max-width:none;}
 }
 </style>
 
@@ -180,13 +205,12 @@ h2{
 
 <body>
 
-<button class="volver" onclick="location.href='index.html'">⬅ ADMIN</button>
+<button class="volver" onclick="location.href='index.html'">ADMIN</button>
+<button class="fullscreen" onclick="pantallaGigante()">PANTALLA</button>
 
 <h2>🏴‍☠️ TRIPULACIÓN YONKO 🏴‍☠️</h2>
 
-<div class="buscador">
-  <input id="busqueda" placeholder="🔍 Buscar pirata..." oninput="filtrar()">
-</div>
+<input class="busqueda" placeholder="🔍 Buscar pirata..." oninput="buscar(this.value)">
 
 <div id="podio" class="podio"></div>
 <div id="lista" class="lista"></div>
@@ -198,14 +222,21 @@ const firebaseConfig={
   databaseURL:"https://ranking-pirata-default-rtdb.firebaseio.com",
   projectId:"ranking-pirata"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database().ref("jugadores");
 
-const esMobile = window.innerWidth <= 768;
-let ranking = [];
+let rankingCompleto=[];
 
-function crearCard(j,pos,cap=false){
+function pantallaGigante(){
+  document.body.classList.toggle("gigante");
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+  }else{
+    document.exitFullscreen();
+  }
+}
+
+function crearCard(j,rol="",cap=false){
   const c=document.createElement("div");
   c.className="card"+(cap?" capitan":"");
   c.innerHTML=`
@@ -213,48 +244,39 @@ function crearCard(j,pos,cap=false){
       ${cap?'<div class="corona">👑</div>':''}
     </div>
     <div class="info">
-      <div class="posicion">#${pos}</div>
+      <div class="posicion">#${j.posicion}</div>
+      ${rol?`<div class="rol">${rol}</div>`:""}
       <div class="nombre">${j.nombre}</div>
-      <div class="recompensa">${(j.puntaje+1000000).toLocaleString()}</div>
+      <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 💰</div>
     </div>`;
   return c;
 }
 
 function render(lista){
   podio.innerHTML="";
-  listaEl.innerHTML="";
+  listaDiv.innerHTML="";
+
+  lista.forEach(j=>{
+    if(j.posicion===1) podio.appendChild(crearCard(j,"REY PIRATA",true));
+    else if(j.posicion===2) podio.appendChild(crearCard(j,"YONKO"));
+    else if(j.posicion===3) podio.appendChild(crearCard(j,"SUPER-NOVA"));
+    else listaDiv.appendChild(crearCard(j));
+  });
 }
 
-function pintar(jugadores){
-  podio.innerHTML="";
-  lista.innerHTML="";
-
-  if(!esMobile){
-    if(jugadores[1]) podio.appendChild(crearCard(jugadores[1],2));
-    if(jugadores[0]) podio.appendChild(crearCard(jugadores[0],1,true));
-    if(jugadores[2]) podio.appendChild(crearCard(jugadores[2],3));
-    jugadores.slice(3).forEach((j,i)=>{
-      lista.appendChild(crearCard(j,i+4));
-    });
-  }else{
-    jugadores.forEach((j,i)=>{
-      lista.appendChild(crearCard(j,i+1,i===0));
-    });
-  }
+function buscar(txt){
+  const q=txt.toLowerCase().trim();
+  if(!q){ render(rankingCompleto); return; }
+  render(rankingCompleto.filter(j=>j.nombre.toLowerCase().includes(q)));
 }
 
-function filtrar(){
-  const q = busqueda.value.toLowerCase();
-  const filtrados = ranking.filter(j =>
-    j.nombre.toLowerCase().includes(q)
-  );
-  pintar(filtrados);
-}
+const listaDiv=document.getElementById("lista");
 
 db.on("value",snap=>{
-  ranking = Object.values(snap.val()||{})
-    .sort((a,b)=>b.puntaje-a.puntaje);
-  pintar(ranking);
+  rankingCompleto=Object.values(snap.val()||{})
+    .sort((a,b)=>b.puntaje-a.puntaje)
+    .map((j,i)=>({...j,posicion:i+1}));
+  render(rankingCompleto);
 });
 </script>
 
