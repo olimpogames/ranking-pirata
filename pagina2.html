@@ -40,14 +40,15 @@ h2{
   border-radius:10px;
   cursor:pointer;
   z-index:100;
+  transition:.3s;
 }
+.volver:hover{transform:scale(1.1);}
 
 /* ================= BUSCADOR ================= */
 .busqueda{
   max-width:400px;
   margin:20px auto 40px;
 }
-
 .busqueda input{
   width:100%;
   padding:12px;
@@ -64,11 +65,6 @@ h2{
   margin-bottom:60px;
 }
 
-.podio .card{
-  flex-direction:column;
-  text-align:center;
-}
-
 /* ================= LISTA ================= */
 .lista{
   display:flex;
@@ -83,7 +79,8 @@ h2{
   display:flex;
   align-items:center;
   gap:22px;
-  animation:fade .6s ease forwards;
+  opacity:0;
+  animation:entrada .8s ease forwards;
 }
 
 .poster{
@@ -94,20 +91,33 @@ h2{
   border-radius:26px;
   box-shadow:0 20px 40px rgba(0,0,0,.8);
   position:relative;
+  transition:.4s;
+}
+
+/* Hover desktop */
+@media(min-width:769px){
+  .card:hover .poster{
+    transform:scale(1.05);
+    box-shadow:0 30px 60px rgba(255,215,100,.4);
+  }
 }
 
 .capitan .poster{
   border:6px solid gold;
+  animation:brillo 2.5s infinite alternate;
 }
 
+/* 👑 CORONA */
 .corona{
   position:absolute;
   top:-35px;
   left:50%;
   transform:translateX(-50%);
   font-size:42px;
+  animation:flotar 2s ease-in-out infinite;
 }
 
+/* ================= INFO ================= */
 .info{
   max-width:420px;
 }
@@ -132,24 +142,37 @@ h2{
 .recompensa{
   font-size:28px;
   color:#f1c76a;
+  animation:respirar 3s ease-in-out infinite;
 }
 
-/* ================= ANIM ================= */
-@keyframes fade{
-  from{opacity:0;transform:translateY(20px);}
+/* ================= ANIMACIONES ================= */
+@keyframes entrada{
+  from{opacity:0;transform:translateY(40px);}
   to{opacity:1;transform:none;}
+}
+
+@keyframes flotar{
+  0%,100%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-12px);}
+}
+
+@keyframes brillo{
+  from{box-shadow:0 0 20px rgba(255,215,100,.3);}
+  to{box-shadow:0 0 50px rgba(255,215,100,.9);}
+}
+
+@keyframes respirar{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.05);}
 }
 
 /* ================= MOBILE ================= */
 @media(max-width:768px){
   body{padding:0;}
   h2,.volver{display:none;}
-
   .podio{display:none;}
 
-  .lista{
-    gap:0;
-  }
+  .lista{gap:0;}
 
   .card{
     height:100vh;
@@ -202,7 +225,6 @@ const buscar=document.getElementById("buscar");
 
 let rankingCompleto=[];
 
-/* 🔎 detección móvil REAL */
 function esMobile(){
   return window.matchMedia("(max-width: 768px)").matches;
 }
