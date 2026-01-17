@@ -18,34 +18,88 @@ body{
   font-family:Arial;
   padding:20px;
 }
+
+h2{
+  margin-bottom:20px;
+}
+
+/* ================= CONTROLES ================= */
 input,button{
   padding:8px;
   margin:5px;
 }
+
+input[type="number"]{
+  width:100px;
+  text-align:center;
+}
+
+button{
+  background:#cfa93f;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+  transition:.2s;
+}
+button:hover{
+  transform:scale(1.05);
+}
+
+/* ================= TABLA ================= */
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:20px;
 }
+
 th,td{
   border:1px solid #333;
   padding:8px;
   text-align:center;
 }
+
 img{
   width:50px;
   height:50px;
   border-radius:50%;
   object-fit:cover;
 }
-button{
-  background:#cfa93f;
-  border:none;
-  cursor:pointer;
+
+/* ================= ANIMACIONES ================= */
+tr{
+  animation:entrada .4s ease;
 }
-input[type="number"]{
-  width:100px;
-  text-align:center;
+
+@keyframes entrada{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:none;}
+}
+
+.sumar{
+  animation:sumar .25s ease;
+}
+@keyframes sumar{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.15);}
+  100%{transform:scale(1);}
+}
+
+.restar{
+  animation:restar .25s ease;
+}
+@keyframes restar{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-3px);}
+  50%{transform:translateX(3px);}
+  75%{transform:translateX(-3px);}
+  100%{transform:none;}
+}
+
+.eliminar{
+  animation:eliminar .3s ease forwards;
+}
+@keyframes eliminar{
+  to{opacity:0; transform:translateX(40px);}
 }
 </style>
 </head>
@@ -55,18 +109,19 @@ input[type="number"]{
 <h2>🏴‍☠️ Comandante Marina 🏴‍☠️</h2>
 
 <input id="nombre" placeholder="Nombre">
-<input id="puntaje" type="number" placeholder="Recompensa">
+<input id="puntaje" type="number" placeholder="Recompensa" value="0">
 <input id="foto" type="file" accept="image/*">
+
 <button onclick="agregar()">Agregar</button>
 <button onclick="window.open('pagina2.html')">Ver Ranking</button>
 
 <table>
 <thead>
 <tr>
-<th>Foto</th>
-<th>Nombre</th>
-<th>Recompensa</th>
-<th>Acciones</th>
+  <th>Foto</th>
+  <th>Nombre</th>
+  <th>Recompensa</th>
+  <th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
@@ -91,22 +146,25 @@ const db = firebase.database();
 <script>
 let jugadores = {};
 
+/* ================= CARGA ================= */
 db.ref("jugadores").on("value", snap=>{
   jugadores = snap.val() || {};
   render();
 });
 
+/* ================= GUARDAR ================= */
 function guardar(){
   db.ref("jugadores").set(jugadores);
 }
 
+/* ================= RENDER ================= */
 function render(){
   tabla.innerHTML="";
   Object.values(jugadores)
     .sort((a,b)=>b.puntaje-a.puntaje)
     .forEach(j=>{
       tabla.innerHTML += `
-        <tr>
+        <tr id="row-${j.id}">
           <td><img src="${j.foto}"></td>
           <td>${j.nombre}</td>
           <td>
@@ -115,42 +173,65 @@ function render(){
           </td>
           <td>
             <button onclick="mod('${j.id}',1)">+</button>
-            <button onclick="mod('${j.id}',-1)">-</button>
+            <button onclick="mod('${j.id}',-1)">−</button>
             <button onclick="del('${j.id}')">X</button>
           </td>
         </tr>`;
     });
 }
 
+/* ================= AGREGAR ================= */
 function agregar(){
   const n = nombre.value.trim();
   const p = parseInt(puntaje.value);
   const f = foto.files[0];
-  if(!n || isNaN(p) || !f) return alert("Completa todo");
+
+  if(!n || p === null || isNaN(p) || !f){
+    alert("Completa todo");
+    return;
+  }
 
   const r = new FileReader();
   r.onload = e=>{
     const id = Date.now().toString();
-    jugadores[id] = {id,nombre:n,puntaje:p,foto:e.target.result};
+    jugadores[id] = {
+      id,
+      nombre:n,
+      puntaje:p,
+      foto:e.target.result
+    };
     guardar();
-    nombre.value=""; puntaje.value=""; foto.value="";
+    nombre.value="";
+    puntaje.value="0";
+    foto.value="";
   };
   r.readAsDataURL(f);
 }
 
+/* ================= MODIFICAR ================= */
 function mod(id,v){
   jugadores[id].puntaje += v;
   guardar();
+
+  const row=document.getElementById("row-"+id);
+  row.classList.remove("sumar","restar");
+  row.classList.add(v>0?"sumar":"restar");
 }
 
+/* ================= SET MANUAL ================= */
 function setPuntaje(id,val){
   jugadores[id].puntaje = parseInt(val) || 0;
   guardar();
 }
 
+/* ================= ELIMINAR ================= */
 function del(id){
-  delete jugadores[id];
-  guardar();
+  const row=document.getElementById("row-"+id);
+  row.classList.add("eliminar");
+  setTimeout(()=>{
+    delete jugadores[id];
+    guardar();
+  },300);
 }
 </script>
 
