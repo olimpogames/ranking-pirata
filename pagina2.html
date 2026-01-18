@@ -178,16 +178,22 @@ h2{
     height:100vh;
     flex-direction:column;
     justify-content:center;
+    align-items:center;
     text-align:center;
   }
 
   .poster{
     width:260px;
     height:360px;
+    min-width:260px;
+    min-height:360px;
   }
 
-  .info{max-width:none;}
+  .info{
+    max-width:none;
+  }
 }
+
 </style>
 
 <!-- FIREBASE -->
@@ -295,3 +301,4 @@ window.addEventListener("resize",()=>render(rankingCompleto));
 
 </body>
 </html>
+
