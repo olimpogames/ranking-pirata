@@ -13,6 +13,7 @@
   --poster-h:480px;
 }
 
+/* ================= BASE ================= */
 body{
   margin:0;
   padding:50px;
@@ -31,6 +32,7 @@ h2{
   font-family:"Cinzel", serif;
 }
 
+/* ================= BOTÓN ADMIN ================= */
 .volver{
   position:fixed;
   top:12px;
@@ -42,11 +44,9 @@ h2{
   border-radius:8px;
   cursor:pointer;
   z-index:100;
-  transition:.3s;
 }
-.volver:hover{transform:scale(1.1);}
 
-/* BUSCADOR */
+/* ================= BUSCADOR ================= */
 .busqueda{
   max-width:420px;
   margin:20px auto 40px;
@@ -59,7 +59,7 @@ h2{
   border:none;
 }
 
-/* PODIO */
+/* ================= PODIO DESKTOP ================= */
 .podio{
   display:flex;
   justify-content:center;
@@ -67,7 +67,7 @@ h2{
   margin-bottom:80px;
 }
 
-/* LISTA */
+/* ================= LISTA ================= */
 .lista{
   display:flex;
   flex-direction:column;
@@ -76,7 +76,7 @@ h2{
   margin:auto;
 }
 
-/* CARD */
+/* ================= CARD ================= */
 .card{
   display:flex;
   gap:26px;
@@ -85,7 +85,7 @@ h2{
   animation:entrada .8s ease forwards;
 }
 
-/* POSTER */
+/* ================= POSTER ================= */
 .poster{
   width:var(--poster-w);
   height:var(--poster-h);
@@ -100,21 +100,18 @@ h2{
 }
 
 .poster img{
-  width:100%;          /* llena ancho */
-  height:100%;         /* llena alto */
-  object-fit:fill;    /* 👈 NO recorta */
+  width:100%;
+  height:100%;
+  object-fit:fill; /* 👈 se estira, NO recorta */
   border-radius:26px;
 }
 
-
-
-/* CAPITÁN */
+/* ================= CAPITÁN ================= */
 .capitan .poster{
   border:6px solid gold;
   animation:brillo 2.5s infinite alternate;
 }
 
-/* 👑 CORONA */
 .corona{
   position:absolute;
   top:-36px;
@@ -124,7 +121,7 @@ h2{
   animation:flotar 2s infinite;
 }
 
-/* INFO */
+/* ================= INFO ================= */
 .info{
   max-width:420px;
 }
@@ -151,28 +148,25 @@ h2{
   animation:respirar 3s infinite;
 }
 
-/* ANIMACIONES */
+/* ================= ANIMACIONES ================= */
 @keyframes entrada{
   from{opacity:0;transform:translateY(40px);}
   to{opacity:1;transform:none;}
 }
-
 @keyframes flotar{
   0%,100%{transform:translate(-50%,0);}
   50%{transform:translate(-50%,-12px);}
 }
-
 @keyframes brillo{
   from{box-shadow:0 0 20px rgba(255,215,100,.4);}
   to{box-shadow:0 0 60px rgba(255,215,100,.9);}
 }
-
 @keyframes respirar{
   0%,100%{transform:scale(1);}
   50%{transform:scale(1.05);}
 }
 
-/* 📱 MOBILE */
+/* ================= 📱 MOBILE ================= */
 @media(max-width:768px){
   :root{
     --poster-w:85vw;
@@ -191,6 +185,7 @@ h2{
 }
 </style>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
@@ -209,46 +204,51 @@ h2{
 <div id="lista" class="lista"></div>
 
 <script>
-const firebaseConfig={
+/* ================= FIREBASE ================= */
+firebase.initializeApp({
   apiKey:"AIzaSyAZRfFXAdgEMmp7JKjmwyTiQiZLFk3MmTA",
   authDomain:"ranking-pirata.firebaseapp.com",
   databaseURL:"https://ranking-pirata-default-rtdb.firebaseio.com",
   projectId:"ranking-pirata"
-};
-firebase.initializeApp(firebaseConfig);
+});
 
-const db=firebase.database().ref("jugadores");
-const podio=document.getElementById("podio");
-const lista=document.getElementById("lista");
-const buscar=document.getElementById("buscar");
+const db = firebase.database().ref("jugadores");
 
-let ranking=[];
+/* ================= VARIABLES ================= */
+const podio = document.getElementById("podio");
+const lista = document.getElementById("lista");
+const buscar = document.getElementById("buscar");
 
-function crearCard(j,rol="",cap=false){
-  const d=document.createElement("div");
-  d.className="card"+(cap?" capitan":"");
-  d.innerHTML=`
+let ranking = [];
+let textoBusqueda = "";
+
+/* ================= CARD ================= */
+function crearCard(j, rol="", cap=false){
+  const d = document.createElement("div");
+  d.className = "card" + (cap ? " capitan" : "");
+  d.innerHTML = `
     <div class="poster">
       <img src="${j.foto}">
-      ${cap?'<div class="corona">👑</div>':""}
+      ${cap ? '<div class="corona">👑</div>' : ""}
     </div>
     <div class="info">
       <div class="posicion">#${j.pos}</div>
-      ${rol?`<div class="rol">${rol}</div>`:""}
+      ${rol ? `<div class="rol">${rol}</div>` : ""}
       <div class="nombre">${j.nombre}</div>
       <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 🪙</div>
     </div>`;
   return d;
 }
 
+/* ================= RENDER ================= */
 function render(data){
-  podio.innerHTML="";
-  lista.innerHTML="";
+  podio.innerHTML = "";
+  lista.innerHTML = "";
 
-  if(window.innerWidth>768){
-    const p1=data.find(j=>j.pos===1);
-    const p2=data.find(j=>j.pos===2);
-    const p3=data.find(j=>j.pos===3);
+  if(window.innerWidth > 768){
+    const p1 = data.find(j=>j.pos===1);
+    const p2 = data.find(j=>j.pos===2);
+    const p3 = data.find(j=>j.pos===3);
 
     if(p2) podio.appendChild(crearCard(p2,"YONKO"));
     if(p1) podio.appendChild(crearCard(p1,"REY PIRATA",true));
@@ -268,24 +268,34 @@ function render(data){
   }
 }
 
-db.on("value",snap=>{
-  ranking=Object.values(snap.val()||{})
-    .sort((a,b)=>b.puntaje-a.puntaje)
-    .map((j,i)=>({...j,pos:i+1}));
-  render(ranking);
-});
+/* ================= FILTRO ================= */
+function aplicarFiltro(){
+  if(!textoBusqueda){
+    render(ranking);
+  }else{
+    render(
+      ranking.filter(j =>
+        j.nombre.toLowerCase().includes(textoBusqueda)
+      )
+    );
+  }
+}
 
-buscar.oninput=()=>{
-  const q=buscar.value.toLowerCase();
-  render(ranking.filter(j=>j.nombre.toLowerCase().includes(q)));
+/* ================= EVENTOS ================= */
+buscar.oninput = () => {
+  textoBusqueda = buscar.value.toLowerCase();
+  aplicarFiltro();
 };
 
-window.addEventListener("resize",()=>render(ranking));
+window.addEventListener("resize", aplicarFiltro);
+
+db.on("value", snap=>{
+  ranking = Object.values(snap.val()||{})
+    .sort((a,b)=>b.puntaje-a.puntaje)
+    .map((j,i)=>({...j,pos:i+1}));
+  aplicarFiltro();
+});
 </script>
 
 </body>
 </html>
-
-
-
-
