@@ -93,19 +93,21 @@ h2{
   border-radius:26px;
   box-shadow:0 20px 40px rgba(0,0,0,.8);
   position:relative;
-  flex-shrink:0;
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
+
 /* 🔥 IMAGEN SIN RECORTE */
 .poster img{
-  width:100%;
-  height:80%;
-  object-fit:contain;
+  height:100%;        /* 👈 manda el ALTO */
+  width:auto;         /* 👈 mantiene proporción */
+  max-width:100%;     /* 👈 evita que se salga */
+  object-fit:contain; /* seguridad */
   border-radius:26px;
 }
+
 
 /* CAPITÁN */
 .capitan .poster{
@@ -284,5 +286,6 @@ window.addEventListener("resize",()=>render(ranking));
 
 </body>
 </html>
+
 
 
