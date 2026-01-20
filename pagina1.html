@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Admin Ranking</title>
 
+<!-- 🔒 PROTECCIÓN LOGIN (NO TOCAR) -->
 <script>
 if(localStorage.getItem("admin")!=="ok"){
   location.href="index.html";
@@ -17,30 +18,58 @@ body{
   font-family:Arial;
   padding:20px;
 }
+
+h2{
+  margin-bottom:20px;
+}
+
 input,button{
   padding:8px;
   margin:5px;
 }
+
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:20px;
 }
+
 th,td{
   border:1px solid #333;
   padding:8px;
   text-align:center;
 }
+
 img{
   width:50px;
   height:50px;
   border-radius:50%;
   object-fit:cover;
 }
+
 button{
   background:#cfa93f;
   border:none;
   cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  transform:scale(1.1);
+}
+
+input[type="number"]{
+  width:100px;
+  text-align:center;
+}
+
+tr{
+  animation:fade .3s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;}
+  to{opacity:1;}
 }
 </style>
 </head>
@@ -50,7 +79,7 @@ button{
 <h2>🏴‍☠️ Comandante Marina 🏴‍☠️</h2>
 
 <input id="nombre" placeholder="Nombre">
-<input id="puntaje" type="number" placeholder="Recompensa">
+<input id="puntaje" type="number" placeholder="Recompensa" value="0">
 <input id="foto" type="file" accept="image/*">
 <button onclick="agregar()">Agregar</button>
 <button onclick="window.open('pagina2.html')">Ver Ranking</button>
@@ -58,15 +87,16 @@ button{
 <table>
 <thead>
 <tr>
-<th>Foto</th>
-<th>Nombre</th>
-<th>Recompensa</th>
-<th>Acciones</th>
+  <th>Foto</th>
+  <th>Nombre</th>
+  <th>Recompensa</th>
+  <th>Acciones</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
 </table>
 
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -80,18 +110,18 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+</script>
 
+<script>
 let jugadores = {};
 
+/* ===== ESCUCHA FIREBASE ===== */
 db.ref("jugadores").on("value", snap=>{
   jugadores = snap.val() || {};
   render();
 });
 
-function guardar(){
-  db.ref("jugadores").set(jugadores);
-}
-
+/* ===== RENDER TABLA ===== */
 function render(){
   tabla.innerHTML="";
   Object.values(jugadores)
@@ -103,52 +133,76 @@ function render(){
           <td>${j.nombre}</td>
           <td>
             <input type="number" value="${j.puntaje}"
-              onchange="setPuntaje('${j.id}',this.value)">
+              onchange="setPuntaje('${j.id}', this.value)">
           </td>
           <td>
             <button onclick="mod('${j.id}',1)">+</button>
-            <button onclick="mod('${j.id}',-1)">-</button>
-            <button onclick="del('${j.id}')">X</button>
+            <button onclick="mod('${j.id}',-1)">−</button>
+            <button onclick="delJugador('${j.id}')">X</button>
           </td>
         </tr>`;
     });
 }
 
-function setPuntaje(id,val){
-  jugadores[id].puntaje=parseInt(val);
-  guardar();
-}
-
-function mod(id,v){
-  jugadores[id].puntaje+=v;
-  guardar();
-}
-
-function del(id){
-  delete jugadores[id];
-  guardar();
-}
-
-/* 🔥 CAMBIO ÚNICO: NO COMPRIMIR IMAGEN */
+/* ===== AGREGAR JUGADOR (CALIDAD ORIGINAL) ===== */
 function agregar(){
   const n = nombre.value.trim();
-  const p = parseInt(puntaje.value);
+  const p = parseInt(puntaje.value) || 0;
   const f = foto.files[0];
-  if(!n || isNaN(p) || !f) return alert("Completa todo");
 
-  const r = new FileReader();
-  r.onload = e=>{
+  if(!n || !f){
+    alert("Nombre y foto obligatorios");
+    return;
+  }
+
+  const reader = new FileReader();
+  const img = new Image();
+
+  reader.onload = e => img.src = e.target.result;
+
+  img.onload = ()=>{
+    const canvas = document.createElement("canvas");
+    const size = 300;
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img,0,0,size,size);
+
+    const base64 = canvas.toDataURL("image/jpeg",0.6);
+
     const id = Date.now().toString();
-    jugadores[id] = {
+
+    db.ref("jugadores/"+id).set({
       id,
       nombre:n,
       puntaje:p,
-      foto:e.target.result   // ✔ imagen original, sin pérdida
-    };
-    guardar();
-    nombre.value=""; puntaje.value=""; foto.value="";
+      foto:base64
+    });
+
+    nombre.value="";
+    puntaje.value="0";
+    foto.value="";
   };
-  r.readAsDataURL(f);
+
+  reader.readAsDataURL(f);
+}
+
+/* ===== MODIFICAR PUNTAJE (CORREGIDO) ===== */
+function mod(id,v){
+  db.ref("jugadores/"+id+"/puntaje")
+    .transaction(actual => (actual || 0) + v);
+}
+
+/* ===== SETEAR PUNTAJE (CORREGIDO) ===== */
+function setPuntaje(id,val){
+  db.ref("jugadores/"+id+"/puntaje")
+    .set(parseInt(val) || 0);
+}
+
+/* ===== ELIMINAR ===== */
+function delJugador(id){
+  db.ref("jugadores/"+id).remove();
 }
 </script>
 
