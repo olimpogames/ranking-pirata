@@ -19,9 +19,7 @@ body{
   padding:20px;
 }
 
-h2{
-  margin-bottom:20px;
-}
+h2{ margin-bottom:20px; }
 
 input,button{
   padding:8px;
@@ -54,18 +52,14 @@ button{
   transition:.2s;
 }
 
-button:hover{
-  transform:scale(1.1);
-}
+button:hover{ transform:scale(1.1); }
 
 input[type="number"]{
   width:100px;
   text-align:center;
 }
 
-tr{
-  animation:fade .3s ease;
-}
+tr{ animation:fade .3s ease; }
 
 @keyframes fade{
   from{opacity:0;}
@@ -79,8 +73,9 @@ tr{
 <h2>🏴‍☠️ Comandante Marina 🏴‍☠️</h2>
 
 <input id="nombre" placeholder="Nombre">
-<input id="puntaje" type="number" placeholder="Recompensa" value="0">
+<input id="puntaje" type="number" value="0">
 <input id="foto" type="file" accept="image/*">
+
 <button onclick="agregar()">Agregar</button>
 <button onclick="window.open('pagina2.html')">Ver Ranking</button>
 
@@ -121,7 +116,7 @@ db.ref("jugadores").on("value", snap=>{
   render();
 });
 
-/* ===== RENDER TABLA ===== */
+/* ===== RENDER ===== */
 function render(){
   tabla.innerHTML="";
   Object.values(jugadores)
@@ -144,7 +139,7 @@ function render(){
     });
 }
 
-/* ===== AGREGAR JUGADOR (CALIDAD ORIGINAL) ===== */
+/* ===== AGREGAR (IMAGEN HD – SIN COMPRESIÓN) ===== */
 function agregar(){
   const n = nombre.value.trim();
   const p = parseInt(puntaje.value) || 0;
@@ -156,28 +151,15 @@ function agregar(){
   }
 
   const reader = new FileReader();
-  const img = new Image();
 
-  reader.onload = e => img.src = e.target.result;
-
-  img.onload = ()=>{
-    const canvas = document.createElement("canvas");
-    const size = 300;
-    canvas.width = size;
-    canvas.height = size;
-
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img,0,0,size,size);
-
-    const base64 = canvas.toDataURL("image/jpeg",0.6);
-
+  reader.onload = e=>{
     const id = Date.now().toString();
 
     db.ref("jugadores/"+id).set({
       id,
       nombre:n,
       puntaje:p,
-      foto:base64
+      foto:e.target.result   // 🔥 IMAGEN ORIGINAL HD
     });
 
     nombre.value="";
@@ -188,13 +170,13 @@ function agregar(){
   reader.readAsDataURL(f);
 }
 
-/* ===== MODIFICAR PUNTAJE (CORREGIDO) ===== */
+/* ===== SUMAR / RESTAR (SEGURO) ===== */
 function mod(id,v){
   db.ref("jugadores/"+id+"/puntaje")
     .transaction(actual => (actual || 0) + v);
 }
 
-/* ===== SETEAR PUNTAJE (CORREGIDO) ===== */
+/* ===== SETEAR MANUAL (SEGURO) ===== */
 function setPuntaje(id,val){
   db.ref("jugadores/"+id+"/puntaje")
     .set(parseInt(val) || 0);
