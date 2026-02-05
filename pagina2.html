@@ -1,301 +1,630 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ranking Pirata</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking Pirata</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:wght@600;800&display=swap"
+    rel="stylesheet">
 
-<style>
-:root{
-  --poster-w:360px;
-  --poster-h:480px;
-}
+  <style>
+    :root {
+      --poster-w: 360px;
+      --poster-h: 480px;
+    }
 
-/* ================= BASE ================= */
-body{
-  margin:0;
-  padding:50px;
-  background:
-    linear-gradient(rgba(0,0,0,.9), rgba(0,0,0,.9)),
-    url("fondo.jpg") center/cover fixed;
-  color:#f3e7cf;
-  font-family:"Playfair Display", serif;
-}
+    /* ================= BASE ================= */
+    body {
+      margin: 0;
+      padding: 50px;
+      background:
+        linear-gradient(rgba(0, 0, 0, .9), rgba(0, 0, 0, .9)),
+        url("fondo.jpg") center/cover fixed;
+      color: #f3e7cf;
+      font-family: "Playfair Display", serif;
+    }
 
-h2{
-  text-align:center;
-  font-size:46px;
-  letter-spacing:5px;
-  margin-bottom:30px;
-  font-family:"Cinzel", serif;
-}
+    /* ================= HEADER ================= */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      gap: 20px;
+    }
 
-/* ================= BOTÓN ADMIN ================= */
-.volver{
-  position:fixed;
-  top:12px;
-  right:12px;
-  padding:6px 12px;
-  font-size:11px;
-  background:#c9a44c;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  z-index:100;
-}
+    /* ================= LOGO ================= */
+    .logo {
+      width: 80px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .5);
+      flex-shrink: 0;
+    }
 
-/* ================= BUSCADOR ================= */
-.busqueda{
-  max-width:420px;
-  margin:20px auto 40px;
-}
-.busqueda input{
-  width:100%;
-  padding:12px;
-  font-size:16px;
-  border-radius:12px;
-  border:none;
-}
+    /* ================= TÍTULO ================= */
+    h2 {
+      text-align: center;
+      font-size: 46px;
+      letter-spacing: 5px;
+      margin: 0;
+      font-family: "Cinzel", serif;
+      flex: 1;
+    }
 
-/* ================= PODIO DESKTOP ================= */
-.podio{
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  margin-bottom:80px;
-}
+    /* ================= BOTÓN ADMIN ================= */
+    .volver {
+      padding: 8px 16px;
+      font-size: 12px;
+      background: #c9a44c;
+      color: #111;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .3s;
+      flex-shrink: 0;
+    }
 
-/* ================= LISTA ================= */
-.lista{
-  display:flex;
-  flex-direction:column;
-  gap:70px;
-  max-width:1100px;
-  margin:auto;
-}
+    .volver:hover {
+      background: #e0b84f;
+      transform: translateY(-2px);
+    }
 
-/* ================= CARD ================= */
-.card{
-  display:flex;
-  gap:26px;
-  align-items:flex-start;
-  opacity:0;
-  animation:entrada .8s ease forwards;
-}
+    /* ================= BUSCADOR ================= */
+    .busqueda {
+      max-width: 420px;
+      margin: 20px auto 40px;
+    }
 
-/* ================= POSTER ================= */
-.poster{
-  width:var(--poster-w);
-  height:var(--poster-h);
-  background:#111;
-  border-radius:26px;
-  box-shadow:0 20px 40px rgba(0,0,0,.8);
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .busqueda input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+    }
 
-.poster img{
-  width:100%;
-  height:100%;
-  object-fit:fill; /* 👈 se estira, NO recorta */
-  border-radius:26px;
-}
+    /* ================= PODIO DESKTOP ================= */
+    .podio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 80px;
+    }
 
-/* ================= CAPITÁN ================= */
-.capitan .poster{
-  border:6px solid gold;
-  animation:brillo 2.5s infinite alternate;
-}
+    .podio-fila {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      max-width: 1200px;
+    }
 
-.corona{
-  position:absolute;
-  top:-36px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:42px;
-  animation:flotar 2s infinite;
-}
+    /* ================= LISTA ================= */
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 70px;
+      max-width: 1100px;
+      margin: auto;
+    }
 
-/* ================= INFO ================= */
-.info{
-  max-width:420px;
-}
+    /* ================= CARD ================= */
+    .card {
+      display: flex;
+      gap: 26px;
+      align-items: flex-start;
+      opacity: 0;
+      animation: entrada .8s ease forwards;
+    }
 
-.posicion{
-  font-size:70px;
-  color:#d4af37;
-  font-family:"Cinzel", serif;
-}
+    /* ================= POSTER ================= */
+    .poster {
+      width: var(--poster-w);
+      height: var(--poster-h);
+      background: #111;
+      border-radius: 26px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .8);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.rol{
-  font-size:26px;
-  color:#f6d48a;
-}
+    .poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      /* 👈 se estira, NO recorta */
+      border-radius: 26px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    }
 
-.nombre{
-  font-size:36px;
-  font-weight:800;
-}
+    /* Placeholder mientras carga la imagen */
+    .poster img[data-loading="true"] {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+      background-size: 200% 200%;
+      animation: shimmer 1.5s infinite;
+    }
 
-.recompensa{
-  font-size:28px;
-  color:#f1c76a;
-  animation:respirar 3s infinite;
-}
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
 
-/* ================= ANIMACIONES ================= */
-@keyframes entrada{
-  from{opacity:0;transform:translateY(40px);}
-  to{opacity:1;transform:none;}
-}
-@keyframes flotar{
-  0%,100%{transform:translate(-50%,0);}
-  50%{transform:translate(-50%,-12px);}
-}
-@keyframes brillo{
-  from{box-shadow:0 0 20px rgba(255,215,100,.4);}
-  to{box-shadow:0 0 60px rgba(255,215,100,.9);}
-}
-@keyframes respirar{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.05);}
-}
+      100% {
+        background-position: -200% 0;
+      }
+    }
 
-/* ================= 📱 MOBILE ================= */
-@media(max-width:768px){
-  :root{
-    --poster-w:85vw;
-    --poster-h:calc(85vw * 1.33);
-  }
+    /* ================= EFECTO ZOOM PRIMER LUGAR ================= */
+    .capitan .poster img {
+      animation: zoomRecompensa 3s infinite;
+    }
 
-  body{padding:0;}
-  h2,.volver,.podio{display:none;}
+    @keyframes zoomRecompensa {
 
-  .card{
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-    min-height:100vh;
-  }
-}
-</style>
+      0%,
+      100% {
+        transform: scale(1);
+      }
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+      50% {
+        transform: scale(1.08);
+      }
+    }
+
+    /* ================= CAPITÁN ================= */
+    .capitan .poster {
+      border: 6px solid gold;
+      animation: brillo 2.5s infinite alternate;
+    }
+
+    .corona {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 42px;
+      animation: flotar 2s infinite;
+    }
+
+    /* ================= INFO ================= */
+    .info {
+      max-width: 420px;
+    }
+
+    .posicion {
+      font-size: 70px;
+      color: #d4af37;
+      font-family: "Cinzel", serif;
+    }
+
+    .rol {
+      font-size: 26px;
+      color: #f6d48a;
+    }
+
+    /* Espacio extra para YONKO */
+    .rol.yonko {
+      margin-top: 20px;
+    }
+
+    .nombre {
+      font-size: 36px;
+      font-weight: 800;
+    }
+
+    .recompensa {
+      font-size: 28px;
+      color: #f1c76a;
+      animation: respirar 3s infinite;
+    }
+
+    .team {
+      font-size: 18px;
+      color: #c9a44c;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* ================= ANIMACIONES ================= */
+    @keyframes entrada {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes flotar {
+
+      0%,
+      100% {
+        transform: translate(-50%, 0);
+      }
+
+      50% {
+        transform: translate(-50%, -12px);
+      }
+    }
+
+    @keyframes brillo {
+      from {
+        box-shadow: 0 0 20px rgba(255, 215, 100, .4);
+      }
+
+      to {
+        box-shadow: 0 0 60px rgba(255, 215, 100, .9);
+      }
+    }
+
+    @keyframes respirar {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* ================= 📱 MOBILE ================= */
+    @media(max-width:768px) {
+      :root {
+        --poster-w: 85vw;
+        --poster-h: calc(85vw * 1.33);
+      }
+
+      body {
+        padding: 20px 10px;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        font-size: clamp(1.3rem, 5vw, 1.8rem);
+        letter-spacing: 2px;
+      }
+
+      .volver {
+        padding: 10px 20px;
+        font-size: 13px;
+        width: 100%;
+      }
+
+      .logo {
+        width: 70px;
+      }
+
+      .busqueda {
+        max-width: 90%;
+        margin: 15px auto 30px;
+      }
+
+      .busqueda input {
+        padding: 14px;
+        font-size: 16px;
+      }
+
+      .podio {
+        display: none;
+      }
+
+      .lista {
+        gap: 50px;
+      }
+
+      .card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+        padding: 20px 0;
+      }
+
+      .posicion {
+        font-size: clamp(3rem, 12vw, 4rem);
+      }
+
+      .rol {
+        font-size: clamp(1.2rem, 5vw, 1.5rem);
+      }
+
+      .nombre {
+        font-size: clamp(1.8rem, 7vw, 2.2rem);
+        margin: 10px 0;
+      }
+
+      .recompensa {
+        font-size: clamp(1.3rem, 6vw, 1.6rem);
+      }
+
+      .team {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+      }
+
+      .corona {
+        font-size: clamp(2rem, 8vw, 2.5rem);
+        top: -30px;
+      }
+    }
+
+    /* ===== PANTALLAS MUY PEQUEÑAS ===== */
+    @media(max-width:480px) {
+      body {
+        padding: 15px 5px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+      }
+
+      .busqueda {
+        margin: 10px auto 20px;
+      }
+
+      .busqueda input {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .lista {
+        gap: 40px;
+      }
+
+      .card {
+        padding: 15px 0;
+      }
+
+      .info {
+        max-width: 90%;
+      }
+    }
+
+    /* ===== LANDSCAPE MOBILE ===== */
+    @media(max-width:768px) and (orientation:landscape) {
+      :root {
+        --poster-w: 40vh;
+        --poster-h: calc(40vh * 1.33);
+      }
+
+      .card {
+        flex-direction: row;
+        min-height: auto;
+        text-align: left;
+        gap: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 
 <body>
 
-<button class="volver" onclick="location.href='index.html'">ADMIN</button>
+  <!-- Audio de fondo en bucle -->
+  <audio id="bgMusic" loop>
+    <source src="wate.mp3" type="audio/mpeg">
+  </audio>
 
-<h2>🏴‍☠️ TRIPULACIÓN YONKO 🏴‍☠️</h2>
+  <!-- Header con logo, título y botón admin -->
+  <div class="header">
+    <img src="logo.jpeg" alt="Logo" class="logo">
+    <h2>🏴‍☠️ TRIPULACIÓN YONKO 🏴‍☠️</h2>
+    <button class="volver" onclick="location.href='index.html'">ADMIN</button>
+  </div>
 
-<div class="busqueda">
-  <input id="buscar" placeholder="🔍 Buscar pirata...">
-</div>
+  <div class="busqueda">
+    <input id="buscar" placeholder="🔍 Buscar pirata...">
+  </div>
 
-<div id="podio" class="podio"></div>
-<div id="lista" class="lista"></div>
+  <div id="podio" class="podio"></div>
+  <div id="lista" class="lista"></div>
 
-<script>
-/* ================= FIREBASE ================= */
-firebase.initializeApp({
-  apiKey:"AIzaSyAZRfFXAdgEMmp7JKjmwyTiQiZLFk3MmTA",
-  authDomain:"ranking-pirata.firebaseapp.com",
-  databaseURL:"https://ranking-pirata-default-rtdb.firebaseio.com",
-  projectId:"ranking-pirata"
-});
+  <script>
+    /* ================= AUDIO CONTROL ================= */
+    const audio = document.getElementById('bgMusic');
+    audio.volume = 0.5; // Volumen al 50%
 
-const db = firebase.database().ref("jugadores");
+    // Intentar reproducir automáticamente al cargar
+    window.addEventListener('load', () => {
+      audio.play().catch(() => {
+        // Si falla, se reproducirá con el primer click
+        console.log('Autoplay bloqueado, esperando interacción del usuario');
+      });
+    });
 
-/* ================= VARIABLES ================= */
-const podio = document.getElementById("podio");
-const lista = document.getElementById("lista");
-const buscar = document.getElementById("buscar");
+    // Reproducir con el primer click/touch en cualquier parte
+    const startAudio = () => {
+      if (audio.paused) {
+        audio.play().catch(() => { });
+      }
+    };
 
-let ranking = [];
-let textoBusqueda = "";
+    document.addEventListener('click', startAudio, { once: true });
+    document.addEventListener('touchstart', startAudio, { once: true });
+    document.addEventListener('keydown', startAudio, { once: true });
+  </script>
 
-/* ================= CARD ================= */
-function crearCard(j, rol="", cap=false){
-  const d = document.createElement("div");
-  d.className = "card" + (cap ? " capitan" : "");
-  d.innerHTML = `
+  <script>
+    /* ================= FIREBASE ================= */
+    firebase.initializeApp({
+      apiKey: "AIzaSyAZRfFXAdgEMmp7JKjmwyTiQiZLFk3MmTA",
+      authDomain: "ranking-pirata.firebaseapp.com",
+      databaseURL: "https://ranking-pirata-default-rtdb.firebaseio.com",
+      projectId: "ranking-pirata"
+    });
+
+    const db = firebase.database().ref("jugadores");
+
+    /* ================= VARIABLES ================= */
+    const podio = document.getElementById("podio");
+    const lista = document.getElementById("lista");
+    const buscar = document.getElementById("buscar");
+
+    let ranking = [];
+    let textoBusqueda = "";
+
+    /* ================= CARD ================= */
+    function crearCard(j, rol = "", cap = false) {
+      const d = document.createElement("div");
+      d.className = "card" + (cap ? " capitan" : "");
+
+      // Agregar clase 'yonko' si el rol es YONKO
+      const rolClass = rol === "YONKO" ? 'rol yonko' : 'rol';
+
+      d.innerHTML = `
     <div class="poster">
-      <img src="${j.foto}">
+      <img 
+        data-src="${j.foto}" 
+        data-loading="true"
+        alt="${j.nombre}"
+        loading="lazy">
       ${cap ? '<div class="corona">👑</div>' : ""}
     </div>
     <div class="info">
       <div class="posicion">#${j.pos}</div>
-      ${rol ? `<div class="rol">${rol}</div>` : ""}
+      ${rol ? `<div class="${rolClass}">${rol}</div>` : ""}
       <div class="nombre">${j.nombre}</div>
-      <div class="recompensa">${(j.puntaje+1000000).toLocaleString()} 🪙</div>
+      <div class="recompensa">${(j.puntaje + 1000000).toLocaleString()} 🪙</div>
+      <div class="team">Tripulación: ${j.team || 'Desconocida'}</div>
     </div>`;
-  return d;
-}
 
-/* ================= RENDER ================= */
-function render(data){
-  podio.innerHTML = "";
-  lista.innerHTML = "";
+      // Cargar imagen de forma optimizada
+      const img = d.querySelector('img');
+      const dataSrc = img.getAttribute('data-src');
 
-  if(window.innerWidth > 768){
-    const p1 = data.find(j=>j.pos===1);
-    const p2 = data.find(j=>j.pos===2);
-    const p3 = data.find(j=>j.pos===3);
+      // Usar IntersectionObserver para lazy loading eficiente
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const image = entry.target;
+              image.src = image.getAttribute('data-src');
+              image.removeAttribute('data-loading');
+              observer.unobserve(image);
+            }
+          });
+        }, {
+          rootMargin: '50px' // Cargar 50px antes de que sea visible
+        });
 
-    if(p2) podio.appendChild(crearCard(p2,"YONKO"));
-    if(p1) podio.appendChild(crearCard(p1,"REY PIRATA",true));
-    if(p3) podio.appendChild(crearCard(p3,"SUPER-NOVA"));
+        imageObserver.observe(img);
+      } else {
+        // Fallback para navegadores antiguos
+        img.src = dataSrc;
+        img.removeAttribute('data-loading');
+      }
 
-    data.filter(j=>j.pos>3).forEach(j=>lista.appendChild(crearCard(j)));
-  }else{
-    data.forEach(j=>{
-      lista.appendChild(
-        crearCard(
-          j,
-          j.pos===1?"REY PIRATA":j.pos===2?"YONKO":j.pos===3?"SUPER-NOVA":"",
-          j.pos===1
-        )
-      );
+      return d;
+    }
+
+    /* ================= RENDER ================= */
+    function render(data) {
+      podio.innerHTML = "";
+      lista.innerHTML = "";
+
+      if (window.innerWidth > 768) {
+        const p1 = data.find(j => j.pos === 1);
+        const p2 = data.find(j => j.pos === 2);
+        const p3 = data.find(j => j.pos === 3);
+        const p4 = data.find(j => j.pos === 4);
+        const p5 = data.find(j => j.pos === 5);
+        const p6 = data.find(j => j.pos === 6);
+
+        // Primera fila: solo el primer lugar
+        if (p1) {
+          const fila1 = document.createElement("div");
+          fila1.className = "podio-fila";
+          fila1.appendChild(crearCard(p1, "REY PIRATA", true));
+          podio.appendChild(fila1);
+        }
+
+        // Segunda fila: lugares 2, 3 y 4 (hasta 3 columnas)
+        const fila2 = document.createElement("div");
+        fila2.className = "podio-fila";
+        if (p2) fila2.appendChild(crearCard(p2, "YONKO"));
+        if (p3) fila2.appendChild(crearCard(p3, "SUPER-NOVA"));
+        if (p4) fila2.appendChild(crearCard(p4, "COMANDANTE"));
+        if (fila2.children.length > 0) podio.appendChild(fila2);
+
+        // Tercera fila: lugares 5, 6 y 7 (hasta 3 columnas)
+        const fila3 = document.createElement("div");
+        fila3.className = "podio-fila";
+        if (p5) fila3.appendChild(crearCard(p5, "CAPITÁN"));
+        if (p6) fila3.appendChild(crearCard(p6, "CAPITÁN"));
+        const p7 = data.find(j => j.pos === 7);
+        if (p7) fila3.appendChild(crearCard(p7, "CAPITÁN"));
+        if (fila3.children.length > 0) podio.appendChild(fila3);
+
+        // Resto en la lista
+        data.filter(j => j.pos > 7).forEach(j => lista.appendChild(crearCard(j)));
+      } else {
+        data.forEach(j => {
+          lista.appendChild(
+            crearCard(
+              j,
+              j.pos === 1 ? "REY PIRATA" : j.pos === 2 ? "YONKO" : j.pos === 3 ? "SUPER-NOVA" : "",
+              j.pos === 1
+            )
+          );
+        });
+      }
+    }
+
+    /* ================= FILTRO ================= */
+    function aplicarFiltro() {
+      if (!textoBusqueda) {
+        render(ranking);
+      } else {
+        render(
+          ranking.filter(j =>
+            j.nombre.toLowerCase().includes(textoBusqueda)
+          )
+        );
+      }
+    }
+
+    /* ================= EVENTOS ================= */
+    buscar.oninput = () => {
+      textoBusqueda = buscar.value.toLowerCase();
+      aplicarFiltro();
+    };
+
+    window.addEventListener("resize", aplicarFiltro);
+
+    db.on("value", snap => {
+      ranking = Object.values(snap.val() || {})
+        .sort((a, b) => b.puntaje - a.puntaje)
+        .map((j, i) => ({ ...j, pos: i + 1 }));
+      aplicarFiltro();
     });
-  }
-}
-
-/* ================= FILTRO ================= */
-function aplicarFiltro(){
-  if(!textoBusqueda){
-    render(ranking);
-  }else{
-    render(
-      ranking.filter(j =>
-        j.nombre.toLowerCase().includes(textoBusqueda)
-      )
-    );
-  }
-}
-
-/* ================= EVENTOS ================= */
-buscar.oninput = () => {
-  textoBusqueda = buscar.value.toLowerCase();
-  aplicarFiltro();
-};
-
-window.addEventListener("resize", aplicarFiltro);
-
-db.on("value", snap=>{
-  ranking = Object.values(snap.val()||{})
-    .sort((a,b)=>b.puntaje-a.puntaje)
-    .map((j,i)=>({...j,pos:i+1}));
-  aplicarFiltro();
-});
-</script>
+  </script>
 
 </body>
+
 </html>
